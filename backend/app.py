@@ -138,6 +138,10 @@ def login():
     else:
         return jsonify({"error": "Credenciales incorrectas"}), 401
 
+print("Rutas disponibles en Flask:")
+for rule in app.url_map.iter_rules():
+    print(f"{rule.endpoint}: {rule.methods} -> {rule.rule}")
+
 if __name__ == "__main__":
     print("Iniciando Flask en 0.0.0.0:5000...")
     app.run(debug=True, host="0.0.0.0", port=5000)
