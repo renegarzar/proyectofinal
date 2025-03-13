@@ -10,8 +10,8 @@ services:
     environment:
       - FLASK_ENV=production
     depends_on:
-      - database  
-    restart: always
+      - database
+    restart: unless-stopped  # ✅ Evita reinicios infinitos si falla
 
   frontend:
     build: ./frontend
@@ -19,7 +19,7 @@ services:
       - "3000:3000"
     depends_on:
       - backend
-    restart: always
+    restart: unless-stopped
 
   database:
     image: postgres:15
