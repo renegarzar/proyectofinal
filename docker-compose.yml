@@ -9,6 +9,8 @@ services:
       - ./backend/storage:/app/storage  
     environment:
       - FLASK_ENV=production
+    depends_on:
+      - database  
     restart: always
 
   frontend:
@@ -17,4 +19,14 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    restart: always
+
+  database:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: plataforma_educativa_q0m3_user
+      POSTGRES_PASSWORD: JrQTAVhQpK1I0q84Jba6JLYWsZiD9IMu
+      POSTGRES_DB: plataforma_educativa_q0m3
+    ports:
+      - "5432:5432"
     restart: always

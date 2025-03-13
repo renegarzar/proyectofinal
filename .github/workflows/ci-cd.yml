@@ -20,13 +20,15 @@ jobs:
 
       - name: Construir y levantar los contenedores
         run: |
-          docker-compose down || true  # Asegurar que no hay contenedores en ejecución
-          docker-compose up --build -d  # Construir y levantar los contenedores
+          docker-compose down || true  
+          docker-compose up --build -d  
 
-      - name: Esperar a que Flask esté listo
+      - name: Verificar que Flask está corriendo
         run: |
           echo "Esperando a que Flask esté disponible..."
-          sleep 15  # Esperar 15 segundos antes de hacer la verificación
+          sleep 20  
+          docker ps  
+          docker logs $(docker ps -q --filter "name=backend") 
           curl --retry 10 --retry-delay 5 -f http://localhost:5000 || exit 1
 
       - name: Verificar que React está corriendo
