@@ -5,12 +5,12 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
 app = Flask(__name__)
 CORS(app)
 
-# Configuración de base de datos (SQLite)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///usuarios.db"
+# Configuración de base de datos (PostgreSQL en Render)
+DATABASE_URL = "postgresql://plataforma_educativa_q0m3_user:JrQTAVhQpK1I0q84Jba6JLYWsZiD9IMu@dpg-cv960jqn91rc73d73dr0-a.frankfurt-postgres.render.com/plataforma_educativa_q0m3"
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Configuración de subida de archivos
@@ -62,7 +62,6 @@ def upload_file():
     if file.filename == "":
         return jsonify({"error": "El archivo no tiene nombre"}), 400
 
-    # Verificar la extensión del archivo
     filename = secure_filename(file.filename)
     file_extension = filename.rsplit(".", 1)[1].lower() if "." in filename else ""
 
@@ -71,23 +70,20 @@ def upload_file():
     if file_extension not in ALLOWED_EXTENSIONS:
         return jsonify({"error": f"Tipo de archivo no permitido: {file_extension}"}), 400
 
-    # Validar tamaño del archivo antes de leerlo
     file.seek(0, os.SEEK_END)
     file_size = file.tell()
-    file.seek(0)  # Reiniciar la lectura del archivo
+    file.seek(0)
     if file_size > MAX_FILE_SIZE_MB * 1024 * 1024:
         return jsonify({"error": "El archivo excede los 50MB"}), 400
 
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
     file.save(filepath)
 
-    # Guardar en la base de datos que el usuario entregó la tarea
     tarea = TareaEntregada(usuario_email=usuario_email, topic_id=topic_id, filename=filename)
     db.session.add(tarea)
     db.session.commit()
 
     return jsonify({"message": "Archivo subido exitosamente", "filename": filename}), 200
-
 
 # Ruta para verificar si un usuario ya entregó una tarea
 @app.route("/check-submission", methods=["GET"])
@@ -107,7 +103,7 @@ def check_submission():
 
 @app.route("/register", methods=["POST"])
 def register():
-    data = request.json  # Asegurar que los datos llegan en formato JSON
+    data = request.json
     nombre = data.get("nombre")
     email = data.get("email")
     password = data.get("password")
@@ -141,7 +137,6 @@ def login():
         })
     else:
         return jsonify({"error": "Credenciales incorrectas"}), 401
-
 
 if __name__ == "__main__":
     app.run(debug=True)
