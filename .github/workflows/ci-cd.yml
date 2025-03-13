@@ -13,7 +13,15 @@ jobs:
       - name: Clonar el repositorio
         uses: actions/checkout@v3
 
-      - name: Configurar Docker y Docker Compose
+      - name: Instalar Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Verificar instalación de Docker Compose
+        run: docker-compose version
+
+      - name: Construir y levantar los contenedores
         run: |
           docker-compose down || true  # Asegurar que no hay contenedores en ejecución
           docker-compose up --build -d  # Construir y levantar los contenedores
