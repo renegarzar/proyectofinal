@@ -138,6 +138,10 @@ def login():
     else:
         return jsonify({"error": "Credenciales incorrectas"}), 401
 
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "API funcionando correctamente"}), 200
+
 print("Rutas disponibles en Flask:")
 for rule in app.url_map.iter_rules():
     print(f"{rule.endpoint}: {rule.methods} -> {rule.rule}")

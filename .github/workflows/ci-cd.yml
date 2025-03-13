@@ -22,14 +22,14 @@ jobs:
         run: |
           docker-compose down || true  
           docker-compose up --build -d  
-          
+
       - name: Verificar que Flask está corriendo
         run: |
           echo "Esperando a que Flask esté disponible..."
           sleep 20
           docker ps
           docker logs $(docker ps -q --filter "name=backend")
-          curl --retry 10 --retry-delay 5 -f http://localhost:5000 || (docker logs $(docker ps -q --filter "name=backend") && exit 1)
+          curl --retry 10 --retry-delay 5 -f http://localhost:5000/ || (docker logs $(docker ps -q --filter "name=backend") && exit 1)
 
       - name: Verificar que React está corriendo
         run: curl --retry 10 --retry-delay 5 -f http://localhost:3000 || exit 1
